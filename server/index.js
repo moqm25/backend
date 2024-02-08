@@ -139,3 +139,18 @@ AND (c.name LIKE CONCAT('%', ?, '%') OR ? IS NULL);
 		}
 	);
 });
+
+app.get("/api/filmsid/:film_id", (req, res) => {
+	db.query(
+		`
+SELECT f.film_id, f.title, f.description, f.release_year, f.language_id, f.rental_duration, f.rental_rate, f.length, f.replacement_cost, f.rating, f.special_features
+FROM film f
+WHERE f.film_id = ?;
+`,
+		[req.params.film_id],
+		(err, result) => {
+			if (err) throw err;
+			res.json(result[0]);
+		}
+	);
+});
