@@ -4,7 +4,7 @@ const {
 	user,
 	password,
 	database,
-} = require("configurations/config.js");
+} = require("./configurations/config.js");
 
 const mysql = require("mysql");
 const express = require("express");
