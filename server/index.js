@@ -169,3 +169,14 @@ WHERE customer_id = ?
 		res.json(result[0]);
 	});
 });
+
+app.get("/api/all-customers", (req, res) => {
+	const query = `
+      SELECT customer_id, first_name, last_name 
+      FROM customer;
+    `;
+	db.query(query, (err, result) => {
+		if (err) throw err;
+		res.json(result);
+	});
+});
