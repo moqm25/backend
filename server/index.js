@@ -200,3 +200,7 @@ app.get("/api/rentals/:customer_id", (req, res) => {
 		res.json(result);
 	});
 });
+
+app.listen(port, () => {
+	console.log(`Server running at http://localhost:${port}`);
+});
