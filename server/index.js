@@ -76,3 +76,33 @@ WHERE f.title = ?;
 		}
 	);
 });
+
+app.get("/api/actors/:firstName/:lastName", (req, res) => {
+	db.query(
+		`
+SELECT a.actor_id, a.first_name, a.last_name, f.title, COUNT(r.rental_id) as rental_count
+FROM actor a
+JOIN film_actor fa ON a.actor_id = fa.actor_id
+JOIN film f ON fa.film_id = f.film_id
+JOIN inventory i ON f.film_id = i.film_id
+JOIN rental r ON i.inventory_id = r.inventory_id
+WHERE a.first_name = ? AND a.last_name = ?
+GROUP BY a.actor_id, a.first_name, a.last_name, f.title
+ORDER BY rental_count DESC
+LIMIT 5;
+`,
+		[req.params.firstName, req.params.lastName],
+		(err, result) => {
+			if (err) throw err;
+			res.json({
+				actor_id: result[0].actor_id,
+				first_name: result[0].first_name,
+				last_name: result[0].last_name,
+				films: result.map((film) => ({
+					title: film.title,
+					rental_count: film.rental_count,
+				})),
+			});
+		}
+	);
+});
