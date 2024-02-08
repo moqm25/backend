@@ -154,3 +154,18 @@ WHERE f.film_id = ?;
 		}
 	);
 });
+
+app.get("/api/customer-exists/:customer_id", (req, res) => {
+	const { customer_id } = req.params;
+	const query = `
+SELECT EXISTS(
+SELECT 1 
+FROM customer 
+WHERE customer_id = ?
+) AS 'Exists';
+`;
+	db.query(query, [customer_id], (err, result) => {
+		if (err) throw err;
+		res.json(result[0]);
+	});
+});
