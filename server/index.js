@@ -106,3 +106,36 @@ LIMIT 5;
 		}
 	);
 });
+
+app.get("/api/films-genre-actor", (req, res) => {
+	const { film_name, actor_first_name, actor_last_name, genre_name } =
+		req.query;
+	db.query(
+		`
+SELECT DISTINCT f.film_id, f.title, a.first_name, a.last_name, c.name AS genre
+FROM film f
+LEFT JOIN film_actor fa ON f.film_id = fa.film_id
+LEFT JOIN actor a ON fa.actor_id = a.actor_id
+LEFT JOIN film_category fc ON f.film_id = fc.film_id
+LEFT JOIN category c ON fc.category_id = c.category_id
+WHERE (f.title LIKE CONCAT('%', ?, '%') OR ? IS NULL)
+AND (a.first_name LIKE CONCAT('%', ?, '%') OR ? IS NULL)
+AND (a.last_name LIKE CONCAT('%', ?, '%') OR ? IS NULL)
+AND (c.name LIKE CONCAT('%', ?, '%') OR ? IS NULL);
+`,
+		[
+			film_name,
+			film_name,
+			actor_first_name,
+			actor_first_name,
+			actor_last_name,
+			actor_last_name,
+			genre_name,
+			genre_name,
+		],
+		(err, result) => {
+			if (err) throw err;
+			res.json(result);
+		}
+	);
+});
