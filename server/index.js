@@ -180,3 +180,23 @@ app.get("/api/all-customers", (req, res) => {
 		res.json(result);
 	});
 });
+
+app.get("/api/rentals/:customer_id", (req, res) => {
+	const { customer_id } = req.params;
+	const query = `
+      SELECT r.customer_id, f.film_id, f.title, r.rental_id,
+             CASE
+                 WHEN r.return_date IS NULL THEN 'Rented Out'
+                 ELSE 'Returned'
+             END AS rental_status
+      FROM rental r
+      JOIN inventory i ON r.inventory_id = i.inventory_id
+      JOIN film f ON i.film_id = f.film_id
+      WHERE r.customer_id = ?
+      ORDER BY r.rental_date;
+    `;
+	db.query(query, [customer_id], (err, result) => {
+		if (err) throw err;
+		res.json(result);
+	});
+});
