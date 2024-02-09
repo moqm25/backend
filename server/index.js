@@ -1,10 +1,4 @@
-const {
-	port,
-	host,
-	user,
-	password,
-	database,
-} = require("./configurations/config.js");
+const { port, host, user, password, database } = require("./config/config.js");
 
 const mysql = require("mysql");
 const express = require("express");
